@@ -17,3 +17,7 @@ int ConnectedComponent::getId() const{
 int ConnectedComponent::getPixelCount() const{
     return pixelCount;
 }
+
+const std::vector<std::pair<int, int>>& ConnectedComponent::getPixels() const{
+    return pixels;
+}
