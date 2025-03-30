@@ -145,3 +145,11 @@ int PGMimageProcessor::getLargestSize() const{
         return a->getPixelCount() < b->getPixelCount();
     })->get()->getPixelCount();
 }
+
+int PGMimageProcessor::getSmallestSize() const{
+    if (components.empty())
+        return 0;
+    return std::min_element(components.begin(), components.end(), [](const auto& a, const auto& b){
+        return a->getPixelCount() < b->getPixelCount();
+    })->get()->getPixelCount();
+}
