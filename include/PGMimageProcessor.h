@@ -1,6 +1,11 @@
 #ifndef PGMIMAGEPROCESSOR_H
 #define PGMIMAGEPROCESSOR_H
 
+#include <memory>
+#include <vector>
+#include <string>
+#include "ConnectedComponent.h"
+
 class PGMimageProcessor{
     private:
         std::vector<std::unique_ptr<ConnectedComponent>> components;
