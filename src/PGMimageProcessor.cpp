@@ -115,3 +115,21 @@ int PGMimageProcessor::filterComponentsBySize(int minSize, int maxSize){
     components.erase(it, components.end());
     return components.size();
 }
+
+bool PGMimageProcessor::writeComponents(const std::string& outFilename){
+    std::ofstream file(outFilename, std::ios::binary);
+    if (!file)
+        return false;
+    
+    file << "P5\n" << width << " " << height << "\n255\n";
+    unsigned char* outputImage = new unsigned char[width*height]();
+
+    for (const auto& comp: components){
+        for (const auto& [x, y] : comp->getPixels()){
+            outputImage[y*width + x] = 255;
+        }
+    }
+    file.write(reinterpret_cast<char*>(outputImage), width, height);
+    delete[] outputImage;
+    return file.good();
+}
