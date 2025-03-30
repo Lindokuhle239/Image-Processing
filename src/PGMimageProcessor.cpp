@@ -133,3 +133,7 @@ bool PGMimageProcessor::writeComponents(const std::string& outFilename){
     delete[] outputImage;
     return file.good();
 }
+
+int PGMimageProcessor::getComponentCount() const{
+    return components.size();
+}
