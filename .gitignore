@@ -1,0 +1,5 @@
+*.o
+*.pgm
+*.ppm
+findcomp
+build/
