@@ -1,5 +1,8 @@
 #include "PGMimageProcessor.h"
 #include <fstream>
+#include <queue>
+#include <algorithm>
+#include <memory>
 
 PGMimageProcessor::PGMimageProcessor(const std::string& filename) : imageData(nullptr), wd(0), ht(0){
     if (!readPGMFile(filename)){

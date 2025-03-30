@@ -1,4 +1,6 @@
 #include "PGMimageProcessor.h"
+#include <iostream>
+#include <string>
 
 int main(int argc, int argv[]){
     if (argc < 2){
