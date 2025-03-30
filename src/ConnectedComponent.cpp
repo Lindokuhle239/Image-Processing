@@ -9,3 +9,11 @@ void ConnectedComponent::addPixel(int x, int y){
     pixels.emplace_back(x, y);
     pixelCount++;
 }
+
+int ConnectedComponent::getId() const{
+    return id;
+}
+
+int ConnectedComponent::getPixelCount() const{
+    return pixelCount;
+}
