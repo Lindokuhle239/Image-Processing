@@ -81,3 +81,28 @@ int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSi
     delete[] tempImage;
     return components.size();
 }
+
+void PGMimageProcessor::BFS(int startX, int startY, unsigned char threshold, unsigned char* image, std::unique_ptr<ConnectedComponent>& component){
+    std::queue<std::pair<int, int>> queue;
+    queue.emplace(startX, startY);
+    image[startY*width + startX] = 0; //mark as visited
+
+    const int dx[] = {-1, 1, 0, 0};
+    const int dy[] = {0, 0, -1, 1};
+
+    while (!queue.empty()){
+        auto [x, y] = queue.front();
+        queue.pop();
+        component->addPixel(x, y);
+
+        for (int i = 0; i < 4; ++i){
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if ((nx >= 0) && (nx < width) && (ny >= 0) && (ny < height) && (image[ny * width +nx] >= threshold){
+                image[ny * width + nx] = 0;
+                queue.emplace(nx, ny);
+            }
+        }
+    }
+}
