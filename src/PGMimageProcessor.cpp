@@ -137,3 +137,11 @@ bool PGMimageProcessor::writeComponents(const std::string& outFilename){
 int PGMimageProcessor::getComponentCount() const{
     return components.size();
 }
+
+int PGMimageProcessor::getLargestSize() const{
+    if (components.empty())
+        return 0;
+    return std::max_element(components.begin(), components.end(), [](const auto& a, const auto& b){
+        return a->getPixelCount() < b->getPixelCount();
+    })->get()->getPixelCount();
+}
