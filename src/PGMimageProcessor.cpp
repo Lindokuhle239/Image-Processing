@@ -33,3 +33,51 @@ PGMimageProcessor& PGMimageProcessor::operator=(PGMimageProcessor&& other) noexc
     }
     return *this;
 }
+
+bool PGMimageProcessor::readPGMFile(const std::string& filename){
+    std::ifstream file(filename, std::ios::binary);
+    if (!file)
+        return false;
+    
+    std::string magicNum;
+    file >> magicNum;
+    if (magicNum != "P5")
+        return false;
+
+    file >> width >> height;
+    int maxVal;
+    file >> maxVal;
+    file.ignore(1); //skip single whitespace
+
+    delete[] imageData;
+    imageData = new unsigned char[width*height];
+    file.read(reinterpret_cast<char*>(imageData), width*height);
+
+    return file.good();
+}
+
+int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSize){
+    if (!imageData)
+        return false;
+    
+    components.clear();
+    unsigned char* tempImage = new unsigned char[width*height];
+    std::copy(imageData, imageData + width * height, tempImage);
+
+    int componentId = 0;
+
+    for (int y = 0; y < height; ++y){
+        for (int x = 0; x < width; ++x){
+            if (tempImage[y * width+x] >= threshold){
+                auto component = std::make_unique<ConnectedComponent>(componentId++);
+                BFS(x, y, threshold, tempImage, component);
+
+                if (component->getPixelCount() >= minValidSize){
+                    components.push_back(std::move(component));
+                }
+            }
+        }
+    }
+    delete[] tempImage;
+    return components.size();
+}
