@@ -153,3 +153,7 @@ int PGMimageProcessor::getSmallestSize() const{
         return a->getPixelCount() < b->getPixelCount();
     })->get()->getPixelCount();
 }
+
+void PGMimageProcessor::printComponentData(const ConnectedComponent& comp) const{
+    std::cout << "Component ID: " << comp.getId << ", Number of pixels: " << comp.getPixelCount() << "\n";
+}
