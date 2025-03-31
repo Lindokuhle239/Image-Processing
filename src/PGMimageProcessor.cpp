@@ -14,6 +14,7 @@ PGMimageProcessor::PGMimageProcessor(const std::string& filename) : imageData(nu
 
 PGMimageProcessor::~PGMimageProcessor(){
     delete[] imageData;
+    imageData = nullptr;
 }
 
 PGMimageProcessor::PGMimageProcessor(PGMimageProcessor&& other) noexcept : components(std::move(other.components)),
