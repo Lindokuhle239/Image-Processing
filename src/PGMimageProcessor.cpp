@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <memory>
 #include <iostream>
+#include <cstring>
 
 PGMimageProcessor::PGMimageProcessor(const std::string& filename) : imageData(nullptr), width(0), height(0){
     if (!readPGMFile(filename)){
@@ -147,31 +148,46 @@ int PGMimageProcessor::filterComponentsBySize(int minSize, int maxSize){
 
 bool PGMimageProcessor::writeComponents(const std::string& outFilename){
     std::ofstream file(outFilename, std::ios::binary);
-    if (!file.is_open()){
-        std::cerr << "Error: Failed to create the output file " << outFilename << " (Error: " << strerror(errno) << ")" << std::endl;
+    if (!file) {
+        std::cerr << "Error: Could not create file " << outFilename << " (Error: " << strerror(errno) << ")" << std::endl;
         return false;
     }
+    /*if (!file.is_open()){
+        std::cerr << "Error: Failed to create the output file " << outFilename << " (Error: " << strerror(errno) << ")" << std::endl;
+        return false;
+    }*/
 
-    std::cout << "Writing output to " << outFilename << " with " << components.size() << " components" << std::endl;
+    //std::cout << "Writing output to " << outFilename << " with " << components.size() << " components" << std::endl;
     
     file << "P5\n" << width << " " << height << "\n255\n";
+    if (!file) {
+        std::cerr << "Error: Failed writing header" << std::endl;
+        return false;
+    }
     unsigned char* outputImage = new unsigned char[width*height]();
 
     for (const auto& comp: components){
-        std::cout << "Writing component " << comp->getId() << " with " << comp->getPixelCount() << " pixels\n";
+        //std::cout << "Writing component " << comp->getId() << " with " << comp->getPixelCount() << " pixels\n";
         for (const auto& [x, y] : comp->getPixels()){
-            outputImage[y*width + x] = 255;
+            if (x >= 0 && x < width && y >= 0 && y < height){
+                outputImage[y*width + x] = 255;
+            }
         }
     }
-    file.write(reinterpret_cast<char*>(outputImage), width * height);
+    file.write(reinterpret_cast<const char*>(outputImage), width * height);
     delete[] outputImage;
 
-    if (file.good()){
+    /*if (file.good()){
         std::cerr << "Error: Failed during writing to " << outFilename << std::endl;
+        return false;
+    }*/
+    if (!file) {
+        std::cerr << "Error: Failed writing pixel data (bytes written: " << file.tellp() << ")" << std::endl;
         return false;
     }
 
-    std::cout << "Successfully wrote " << outFilename << std::endl;
+    //std::cout << "Successfully wrote " << outFilename << std::endl;
+    file.close();
     return true;
 }
 
