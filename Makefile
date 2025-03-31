@@ -2,9 +2,10 @@ CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -Iinclude
 LDFLAGS =
 
-SRC_DIR =src
+SRC_DIR = src
 INCLUDE_DIR = include
 BUILD_DIR = build
+EXECUTABLE = findcomp
 
 SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
