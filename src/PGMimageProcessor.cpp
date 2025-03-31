@@ -63,10 +63,9 @@ bool PGMimageProcessor::readPGMFile(const std::string& filename){
 
     std::cout << "Image dimensions: " << width << "x" << height << " (" << width*height << " total pixels)" << std::endl;
 
-    return file.good();
-
     std::cout << "Loaded image: " << width << "x" << height << std::endl;
-    return true;
+
+    return file.good();
 }
 
 int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSize){
