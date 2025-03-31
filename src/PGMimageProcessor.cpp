@@ -40,13 +40,17 @@ PGMimageProcessor& PGMimageProcessor::operator=(PGMimageProcessor&& other) noexc
 
 bool PGMimageProcessor::readPGMFile(const std::string& filename){
     std::ifstream file(filename, std::ios::binary);
-    if (!file)
+    if (!file){
+        std::cerr << "Error: Could not open file " << filename << std::endl;
         return false;
+    }
     
     std::string magicNum;
     file >> magicNum;
-    if (magicNum != "P5")
+    if (magicNum != "P5"){
+        std::cerr << "Error: Not a binary PGM file (P5)" << std::endl;
         return false;
+    }
 
     file >> width >> height;
     int maxVal;
@@ -58,11 +62,17 @@ bool PGMimageProcessor::readPGMFile(const std::string& filename){
     file.read(reinterpret_cast<char*>(imageData), width*height);
 
     return file.good();
+
+    std::cout << "Loaded image: " << width << "x" << height << std::endl;
+    return true;
 }
 
 int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSize){
-    if (!imageData)
-        return false;
+    if (!imageData){
+        std::cerr << "Error: No image data loaded!" << std::endl;
+        return 0;
+    }
+    std::cout << "Thresholding at: " << (int)threshold << std::endl;
     
     components.clear();
     unsigned char* tempImage = new unsigned char[width*height];
@@ -87,6 +97,7 @@ int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSi
 }
 
 void PGMimageProcessor::BFS(int startX, int startY, unsigned char threshold, unsigned char* image, std::unique_ptr<ConnectedComponent>& component){
+    std::cout << "Starting BFS at (" << startX << "," << startY << ") value: " << (int)image[startX*width + startY] << std::endl;
     std::queue<std::pair<int, int>> queue;
     queue.emplace(startX, startY);
     image[startY*width + startX] = 0; //mark as visited
