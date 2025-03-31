@@ -73,6 +73,13 @@ int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSi
         std::cerr << "Error: No image data loaded!" << std::endl;
         return 0;
     }
+    //Debug: Print first 25 pixel values
+    std::cout << "First 25 pixels: ";
+    for (int i = 0; i < 25; ++i) {
+        std::cout << (int)imageData[i] << " ";
+    }
+    std::cout << std::endl;
+
     std::cout << "Thresholding at: " << (int)threshold << std::endl;
     
     components.clear();
@@ -140,20 +147,32 @@ int PGMimageProcessor::filterComponentsBySize(int minSize, int maxSize){
 
 bool PGMimageProcessor::writeComponents(const std::string& outFilename){
     std::ofstream file(outFilename, std::ios::binary);
-    if (!file)
+    if (!file.is_open()){
+        std::cerr << "Error: Failed to create the output file " << outFilename << " (Error: " << strerror(errno) << ")" << std::endl;
         return false;
+    }
+
+    std::cout << "Writing output to " << outFilename << " with " << components.size() << " components" << std::endl;
     
     file << "P5\n" << width << " " << height << "\n255\n";
     unsigned char* outputImage = new unsigned char[width*height]();
 
     for (const auto& comp: components){
+        std::cout << "Writing component " << comp->getId() << " with " << comp->getPixelCount() << " pixels\n";
         for (const auto& [x, y] : comp->getPixels()){
             outputImage[y*width + x] = 255;
         }
     }
     file.write(reinterpret_cast<char*>(outputImage), width * height);
     delete[] outputImage;
-    return file.good();
+
+    if (file.good()){
+        std::cerr << "Error: Failed during writing to " << outFilename << std::endl;
+        return false;
+    }
+
+    std::cout << "Successfully wrote " << outFilename << std::endl;
+    return true;
 }
 
 int PGMimageProcessor::getComponentCount() const{
