@@ -15,6 +15,9 @@ OBJECTS = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
+	$(CXX) $(LDFLAGS) $^ -o $@
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(BUILD_DIR):
@@ -24,5 +27,5 @@ clean:
 	rm -rf $(BUILD_DIR) $(EXECUTABLE)
 
 tests: $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o tests $(SRC_DIR)/test.cpp $(filter-out $(BUILD_DIR)/main.o, $(OBJECTS)) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -o tests $(SRC_DIR)/test.cpp $^ $(LDFLAGS)
 	./tests
