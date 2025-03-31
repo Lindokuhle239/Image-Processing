@@ -2,13 +2,13 @@
 #include <iostream>
 #include <string>
 
-int main(int argc, int argv[]){
+int main(int argc, char* argv[]){
     if (argc < 2){
         std::cerr << "Usage: " << argv[0] << " [options] <inputPGMfile>\n";
         return 1;
     }
 
-    std::striing inputFile;
+    std::string inputFile;
     std::string outputFile;
     int threshold = 128;
     int minValidSize = 1;
@@ -21,11 +21,14 @@ int main(int argc, int argv[]){
     for (int i = 1; i < argc; ++i){
         std::string arg = argv[i];
         if (arg == "-t" && i + 1 < argc){
-            minValidSize = std::stoi(argv[++i]);
+            threshold = std::stoi(std::string(argv[++i]));
+        }
+        else if (arg == "-m" && i + 1 < argc){
+            minValidSize = std::stoi(std::string(argv[++i]));
         }
         else if (arg == "-f" && i + 2 < argc){
-            filterMin = std::stoi(argv[++i]);
-            filterMax = std::stoi(argv[++i]);
+            filterMin = std::stoi(std::string(argv[++i]));
+            filterMax = std::stoi(std::string(argv[++i]));
         }
         else if (arg == "-p"){
             printData = true;
