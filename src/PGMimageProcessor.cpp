@@ -3,8 +3,9 @@
 #include <queue>
 #include <algorithm>
 #include <memory>
+#include <iostream>
 
-PGMimageProcessor::PGMimageProcessor(const std::string& filename) : imageData(nullptr), wd(0), ht(0){
+PGMimageProcessor::PGMimageProcessor(const std::string& filename) : imageData(nullptr), width(0), height(0){
     if (!readPGMFile(filename)){
         throw std::runtime_error("Failed to read PGM file.");
     }
@@ -132,7 +133,7 @@ bool PGMimageProcessor::writeComponents(const std::string& outFilename){
             outputImage[y*width + x] = 255;
         }
     }
-    file.write(reinterpret_cast<char*>(outputImage), width, height);
+    file.write(reinterpret_cast<char*>(outputImage), width * height);
     delete[] outputImage;
     return file.good();
 }
