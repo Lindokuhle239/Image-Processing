@@ -61,6 +61,8 @@ bool PGMimageProcessor::readPGMFile(const std::string& filename){
     imageData = new unsigned char[width*height];
     file.read(reinterpret_cast<char*>(imageData), width*height);
 
+    std::cout << "Image dimensions: " << width << "x" << height << " (" << width*height << " total pixels)" << std::endl;
+
     return file.good();
 
     std::cout << "Loaded image: " << width << "x" << height << std::endl;
@@ -97,7 +99,11 @@ int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSi
 }
 
 void PGMimageProcessor::BFS(int startX, int startY, unsigned char threshold, unsigned char* image, std::unique_ptr<ConnectedComponent>& component){
-    std::cout << "Starting BFS at (" << startX << "," << startY << ") value: " << (int)image[startX*width + startY] << std::endl;
+    if (startX >= width || startY >= height){
+        std::cerr << "Invalid BFS start position: (" << startX << "," << startY << ")" << std::endl;
+        return;
+    }
+    std::cout << "Starting BFS at (" << startX << "," << startY << ") value: " << (int)image[startY*width + startX] << std::endl;
     std::queue<std::pair<int, int>> queue;
     queue.emplace(startX, startY);
     image[startY*width + startX] = 0; //mark as visited
@@ -114,8 +120,8 @@ void PGMimageProcessor::BFS(int startX, int startY, unsigned char threshold, uns
             int nx = x + dx[i];
             int ny = y + dy[i];
 
-            if ((nx >= 0) && (nx < width) && (ny >= 0) && (ny < height) && (image[ny * width +nx] >= threshold)){
-                image[ny * width + nx] = 0;
+            if (nx >= 0 && nx < width && ny >= 0 && ny < height && image[ny*width + nx] >= threshold){
+                image[ny*width + nx] = 0;
                 queue.emplace(nx, ny);
             }
         }
