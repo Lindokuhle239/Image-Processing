@@ -81,9 +81,11 @@ int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSi
 
     int componentId = 0;
 
+    std::cout << "Scanning image for components..." << std::endl;
     for (int y = 0; y < height; ++y){
         for (int x = 0; x < width; ++x){
             if (tempImage[y * width+x] >= threshold){
+                std::cout << "Found pixel above threshold at (" << x << "," << y << ")" << std::endl;
                 auto component = std::make_unique<ConnectedComponent>(componentId++);
                 BFS(x, y, threshold, tempImage, component);
 
