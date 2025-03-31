@@ -159,5 +159,5 @@ int PGMimageProcessor::getSmallestSize() const{
 }
 
 void PGMimageProcessor::printComponentData(const ConnectedComponent& comp) const{
-    std::cout << "Component ID: " << comp.getId << ", Number of pixels: " << comp.getPixelCount() << "\n";
+    std::cout << "Component ID: " << comp.getId() << ", Number of pixels: " << comp.getPixelCount() << "\n";
 }
