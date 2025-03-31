@@ -33,7 +33,7 @@ int main(int argc, char* argv[]){
         else if (arg == "-p"){
             printData = true;
         }
-        else if (arg == "w" && i + 1 < argc){
+        else if (arg == "-w" && i + 1 < argc){
             writeOutput = true;
             outputFile = argv[++i];
         }
@@ -44,6 +44,7 @@ int main(int argc, char* argv[]){
     try{
         PGMimageProcessor processor(inputFile);
         int initialCount = processor.extractComponents(threshold, minValidSize);
+        std::cout << "Initial components found: " << initialCount << std::endl;
 
         if (filterMin != -1 && filterMax != -1){
             processor.filterComponentsBySize(filterMin, filterMax);
@@ -55,7 +56,15 @@ int main(int argc, char* argv[]){
         }
 
         if (writeOutput){
-            processor.writeComponents(outputFile);
+            if (outputFile.empty()){
+                std::cerr << "Error: No output filename specified with -w" << std::endl;
+                return 1;
+            }
+            if (!processor.writeComponents(outputFile)){
+                std::cerr << "Error: Failed to write output file" << std::endl;
+                return 1;
+            }
+            //processor.writeComponents(outputFile);
         }
     }
     catch(const std::exception& e){
