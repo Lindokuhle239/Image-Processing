@@ -103,7 +103,7 @@ void PGMimageProcessor::BFS(int startX, int startY, unsigned char threshold, uns
             int nx = x + dx[i];
             int ny = y + dy[i];
 
-            if ((nx >= 0) && (nx < width) && (ny >= 0) && (ny < height) && (image[ny * width +nx] >= threshold){
+            if ((nx >= 0) && (nx < width) && (ny >= 0) && (ny < height) && (image[ny * width +nx] >= threshold)){
                 image[ny * width + nx] = 0;
                 queue.emplace(nx, ny);
             }
