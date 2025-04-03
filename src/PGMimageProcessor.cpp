@@ -76,7 +76,7 @@ bool PGMimageProcessor::readPGMFile(const std::string& filename){
 
 int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSize){
     bool* visited = new bool[width*height];
-    memset(visited, false. width*height);
+    memset(visited, false, width*height);
 
     int componentID = 0;
     for (int y = 0; y < height; ++y){
@@ -85,7 +85,7 @@ int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSi
             if (imageData[index] >= threshold && !visited[index]){
             //if (tempImage[y * width+x] >= threshold){
                 std::cout << "Found pixel above threshold at (" << x << "," << y << ")" << std::endl;
-                auto component = std::make_unique<ConnectedComponent>(componentId++);
+                auto component = std::make_unique<ConnectedComponent>(componentID++);
                 //BFS(x, y, threshold, tempImage, component);
                 BFS(x, y, threshold, visited, component);
                 if (component->getPixelCount() >= minValidSize){
