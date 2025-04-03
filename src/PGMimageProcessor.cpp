@@ -75,7 +75,29 @@ bool PGMimageProcessor::readPGMFile(const std::string& filename){
 }
 
 int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSize){
-    if (!imageData){
+    bool* visited = new bool[width*height];
+    memset(visited, false. width*height);
+
+    int componentID = 0;
+    for (int y = 0; y < height; ++y){
+        for (int x = 0; x < width; ++x){
+            int index = y * width + x;
+            if (imageData[index] >= threshold && !visited[index]){
+            //if (tempImage[y * width+x] >= threshold){
+                std::cout << "Found pixel above threshold at (" << x << "," << y << ")" << std::endl;
+                auto component = std::make_unique<ConnectedComponent>(componentId++);
+                //BFS(x, y, threshold, tempImage, component);
+                BFS(x, y, threshold, visited, component);
+                if (component->getPixelCount() >= minValidSize){
+                    components.push_back(std::move(component));
+                }
+            }
+        }
+    }
+    delete[] visited;
+    return components.size();
+
+    /**if (!imageData){
         std::cerr << "Error: No image data loaded!" << std::endl;
         return 0;
     }
@@ -109,7 +131,7 @@ int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSi
         }
     }
     delete[] tempImage;
-    return components.size();
+    return components.size();*/
 }
 
 void PGMimageProcessor::BFS(int startX, int startY, unsigned char threshold, unsigned char* image, std::unique_ptr<ConnectedComponent>& component){
