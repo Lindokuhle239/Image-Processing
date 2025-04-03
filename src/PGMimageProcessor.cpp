@@ -14,7 +14,7 @@ PGMimageProcessor::PGMimageProcessor(const std::string& filename) : imageData(nu
 
 PGMimageProcessor::~PGMimageProcessor(){
     delete[] imageData;
-    imageData = nullptr;
+    //imageData = nullptr;
 }
 
 PGMimageProcessor::PGMimageProcessor(PGMimageProcessor&& other) noexcept : components(std::move(other.components)),
@@ -57,9 +57,13 @@ bool PGMimageProcessor::readPGMFile(const std::string& filename){
     file >> width >> height;
     int maxVal;
     file >> maxVal;
-    file.ignore(1); //skip single whitespace
+    file.get();
 
-    delete[] imageData;
+    if (maxVal != 255){
+        std::cerr << "Warning: Unsupported max pixel value. Expected 255." << std::endl;
+    }
+
+    //delete[] imageData;
     imageData = new unsigned char[width*height];
     file.read(reinterpret_cast<char*>(imageData), width*height);
 
