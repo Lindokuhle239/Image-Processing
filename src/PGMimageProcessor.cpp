@@ -183,7 +183,7 @@ int PGMimageProcessor::filterComponentsBySize(int minSize, int maxSize){
 bool PGMimageProcessor::writeComponents(const std::string& outFilename){
     std::ofstream file(outFilename, std::ios::binary);
     if (!file) {
-        std::cerr << "Error: Could not create file " << outFilename << " (Error: " << strerror(errno) << ")" << std::endl;
+        std::cerr << "Error: Cannot open output file " << std::endl;
         return false;
     }
     /*if (!file.is_open()){
@@ -202,27 +202,32 @@ bool PGMimageProcessor::writeComponents(const std::string& outFilename){
 
     for (const auto& comp: components){
         //std::cout << "Writing component " << comp->getId() << " with " << comp->getPixelCount() << " pixels\n";
-        for (const auto& [x, y] : comp->getPixels()){
-            if (x >= 0 && x < width && y >= 0 && y < height){
+        //for (const auto& [x, y] : comp->getPixels()){
+        for(const auto& pixel: comp->getPixels()){
+            /*if (x >= 0 && x < width && y >= 0 && y < height){
                 outputImage[y*width + x] = 255;
-            }
+            }*/
+            outputImage[pixel.second * width + pixel.first] = 255;
         }
     }
     file.write(reinterpret_cast<const char*>(outputImage), width * height);
     delete[] outputImage;
+    file.close();
+
+    return true;
 
     /*if (file.good()){
         std::cerr << "Error: Failed during writing to " << outFilename << std::endl;
         return false;
     }*/
-    if (!file) {
+    /*if (!file) {
         std::cerr << "Error: Failed writing pixel data (bytes written: " << file.tellp() << ")" << std::endl;
         return false;
     }
 
     //std::cout << "Successfully wrote " << outFilename << std::endl;
     file.close();
-    return true;
+    return true;*/
 }
 
 int PGMimageProcessor::getComponentCount() const{
