@@ -30,6 +30,9 @@ class PGMimageProcessor{
         int getSmallestSize() const;
         void printComponentData(const ConnectedComponent& component) const;
 
+        int getWidth() const {return width;}
+        int getHeight() const {return height;}
+
     private:
         //helper methods
         bool readPGMFile(const std::string& filename);
