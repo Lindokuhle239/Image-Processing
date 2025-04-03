@@ -33,7 +33,9 @@ class PGMimageProcessor{
     private:
         //helper methods
         bool readPGMFile(const std::string& filename);
-        void BFS(int x, int y, unsigned char threshold, unsigned char* image, std::unique_ptr<ConnectedComponent>& components);
+        //void BFS(int x, int y, unsigned char threshold, unsigned char* image, std::unique_ptr<ConnectedComponent>& components);
+        void BFS(int x, int y, unsigned char threshold, bool* visited, std::unique_ptr<ConnectedComponent>& components);
+
 };
 
 #endif
