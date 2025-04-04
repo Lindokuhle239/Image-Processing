@@ -1,27 +1,38 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 #include "PGMimageProcessor.h"
-#include <filesystem>
 
-TEST_CASE("ConnectedComponent basic functionality", "[ConnectComponent]"){
-    ConnectedComponent cc(1);
-    REQUIRE(cc.getId() == 1);
-    REQUIRE(cc.getPixelCount() == 0);
-
-    cc.addPixel(10, 20);
-    REQUIRE(cc.getPixelCount == 1);
+TEST_CASE("Custom Constructor", "[PGMimageProcessor]") {
+    PGMimageProcessor p("Assignment Resources/Shapes.pgm");
+    REQUIRE(p.getWidth() > 0);
+    REQUIRE(p.getHeight() > 0);
+    REQUIRE(p.getComponentCount() == 0);
 }
 
-TEST_CASE("PGMimageProcessor file loading", "[PGMimageProcessor]"){
-    REQUIRE_NOTHROW(PGMimageProcessor("test.pgm"));
-
-    PGMimageProcessor process("test.pgm");
-    REQUIRE(processor.getComponentCount() == 0);
-}
-
-TEST_CASE("Component extraction", "[PGMimageProcessor]"){
-    PGMimageProcessor process("test.pgm");
-    int count = processor.extracrComponents(128, 10);
+TEST_CASE("Component Extraction", "[PGMimageProcessor]") {
+    PGMimageProcessor p("Assignment Resources/Shapes.pgm");
+    int count = p.extractComponents(128, 1);
     REQUIRE(count > 0);
-    REQUIRE(processor.getComponentCount() == count);
+    REQUIRE(p.getComponentCount() == count);
+}
+
+TEST_CASE("Largest and Smallest Component Size", "[PGMimageProcessor]") {
+    PGMimageProcessor p("Assignment Resources/Shapes.pgm");
+    p.extractComponents(128, 1);
+    REQUIRE(p.getLargestSize() == 520187);
+    REQUIRE(p.getSmallestSize() > 0);
+}
+
+TEST_CASE("Filter Components by Size", "[PGMimageProcessor]") {
+    PGMimageProcessor p("Assignment Resources/Shapes.pgm");
+    p.extractComponents(128, 1);
+    int beforeFilter = p.getComponentCount();
+    p.filterComponentsBySize(10000, 500000);
+    REQUIRE(p.getComponentCount() <= beforeFilter);
+}
+
+TEST_CASE("Write Components to File", "[PGMimageProcessor]") {
+    PGMimageProcessor p("Assignment Resources/Shapes.pgm");
+    p.extractComponents(128, 1);
+    REQUIRE(p.writeComponents("output.pgm"));
 }
