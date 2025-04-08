@@ -15,7 +15,6 @@ PPMimageProcessor::~PPMimageProcessor() {
     delete[] imageData;
 }
 
-m
 PPMimageProcessor::PPMimageProcessor(PPMimageProcessor&& other) noexcept
 : components(std::move(other.components)), imageData(other.imageData), width(other.width), height(other.height) {
     other.imageData = nullptr;
@@ -74,7 +73,7 @@ bool PPMimageProcessor::readPPMFile(const std::string& filename){
     return file.good();
 }
 
-int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSize){
+int PPMimageProcessor::extractComponents(unsigned char threshold, int minValidSize){
     bool* visited = new bool[width*height];
     memset(visited, false, width*height);
 
@@ -97,7 +96,7 @@ int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSi
     return components.size();
 }
 
-void PGMimageProcessor::BFS(int startX, int startY, unsigned char threshold, bool* visited, std::unique_ptr<ConnectedComponent>& component){
+void PPMimageProcessor::BFS(int startX, int startY, unsigned char threshold, bool* visited, std::unique_ptr<ConnectedComponent>& component){
     std::queue<std::pair<int, int>> queue;
     queue.emplace(startX, startY);
     visited[startY * width + startX] =true;
@@ -126,7 +125,7 @@ void PGMimageProcessor::BFS(int startX, int startY, unsigned char threshold, boo
     }
 }
 
-int PGMimageProcessor::filterComponentsBySize(int minSize, int maxSize){
+int PPMimageProcessor::filterComponentsBySize(int minSize, int maxSize){
     auto it = std::remove_if(components.begin(), components.end(), [minSize, maxSize](const std::unique_ptr<ConnectedComponent>& comp){
     //auto it = std::remove_if(components.begin(), components.end(), [&](const std::unique_ptr<ConnectedComponent>& comp)){
         int size = comp->getPixelCount();
@@ -136,7 +135,7 @@ int PGMimageProcessor::filterComponentsBySize(int minSize, int maxSize){
     return components.size();
 }
 
-bool PGMimageProcessor::writeComponents(const std::string& outFilename){
+bool PPMimageProcessor::writeComponents(const std::string& outFilename){
     std::ofstream file(outFilename, std::ios::binary);
     if (!file) {
         std::cerr << "Error: Cannot open output file " << std::endl;
@@ -233,11 +232,11 @@ bool PPMimageProcessor::writeBoxedComponents(const std::string& outFileName, uns
     return file.good();
 }
 
-int PGMimageProcessor::getComponentCount() const{
+int PPMimageProcessor::getComponentCount() const{
     return components.size();
 }
 
-int PGMimageProcessor::getLargestSize() const{
+int PPMimageProcessor::getLargestSize() const{
     if (components.empty())
         return 0;
     return std::max_element(components.begin(), components.end(), [](const auto& a, const auto& b){
@@ -245,7 +244,7 @@ int PGMimageProcessor::getLargestSize() const{
     })->get()->getPixelCount();
 }
 
-int PGMimageProcessor::getSmallestSize() const{
+int PPMimageProcessor::getSmallestSize() const{
     if (components.empty())
         return 0;
     return std::min_element(components.begin(), components.end(), [](const auto& a, const auto& b){
@@ -253,6 +252,6 @@ int PGMimageProcessor::getSmallestSize() const{
     })->get()->getPixelCount();
 }
 
-void PGMimageProcessor::printComponentData(const ConnectedComponent& comp) const{
+void PPMimageProcessor::printComponentData(const ConnectedComponent& comp) const{
     std::cout << "Component ID: " << comp.getId() << ", Number of pixels: " << comp.getPixelCount() << "\n";
 }
