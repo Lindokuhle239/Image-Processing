@@ -112,7 +112,7 @@ void PPMimageProcessor::BFS(int startX, int startY, unsigned char threshold, boo
         for (int i = 0; i < 4; ++i){
             int nx = x + dx[i];
             int ny = y + dy[i];
-            if (nx >= 0 && nx < width && ny >= 0 && ny < height && imageData[nIndex] >= threshold && !visited[nIndex]){
+            if (nx >= 0 && nx < width && ny >= 0 && ny < height && !visited[ny * width + nx]){
                 int nIndex = (ny * width + nx) *3; // RGB image, so 3 bytes per pixel
                 unsigned char gray = rgbToGrayScale(imageData[nIndex], imageData[nIndex + 1], imageData[nIndex + 2]);
 
@@ -127,7 +127,6 @@ void PPMimageProcessor::BFS(int startX, int startY, unsigned char threshold, boo
 
 int PPMimageProcessor::filterComponentsBySize(int minSize, int maxSize){
     auto it = std::remove_if(components.begin(), components.end(), [minSize, maxSize](const std::unique_ptr<ConnectedComponent>& comp){
-    //auto it = std::remove_if(components.begin(), components.end(), [&](const std::unique_ptr<ConnectedComponent>& comp)){
         int size = comp->getPixelCount();
         return size < minSize || size > maxSize;
     });
@@ -159,7 +158,7 @@ bool PPMimageProcessor::writeComponents(const std::string& outFilename){
     }
     file.write(reinterpret_cast<const char*>(outputImage), width * height*3);
     delete[] outputImage;
-    file.close();
+    return file.good();
 }
 
 bool PPMimageProcessor::writeBoxedComponents(const std::string& outFileName, unsigned char boxColor[3]){
@@ -168,7 +167,7 @@ bool PPMimageProcessor::writeBoxedComponents(const std::string& outFileName, uns
         return writeBoxedComponents(outFileName, red);
     }
 
-    std::ofstream filenout(outFileName, std::ios::binary);
+    std::ofstream file(outFileName, std::ios::binary);
     if (!file){
         std::cerr << "Error: Cannot open output file " << outFileName << std::endl;
         return false;

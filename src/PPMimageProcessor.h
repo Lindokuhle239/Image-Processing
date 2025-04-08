@@ -28,7 +28,7 @@ class PPMimageProcessor {
 
         //core functionality
         int extractComponents(unsigned char threshold, int minValidSize);
-        int filterComponents(int minSize, int maxSize);
+        int filterComponentsBySize(int minSize, int maxSize);
         bool writeComponents(const std::string& outFileName);
         bool writeBoxedComponents(const std::string& outFileName, unsigned char boxColor[3] = nullptr);
 

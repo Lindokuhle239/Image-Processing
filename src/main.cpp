@@ -21,6 +21,7 @@ ImageType getImageType(const std::string& filename) {
             return PPM;
         }
     }
+    return UNKNOWN;
 }
 
 int main(int argc, char* argv[]){
@@ -63,7 +64,7 @@ int main(int argc, char* argv[]){
         }
         else if (arg == "-b" && i+1 <argc){
             writeBoxed = true;
-            BoxedOutputFile = argv[++i];
+            boxedOutputFile = argv[++i];
         }
         else{
             inputFile = arg;
