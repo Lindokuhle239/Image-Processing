@@ -73,3 +73,25 @@ bool PPMimageProcessor::readPPMFile(const std::string& filename){
 
     return file.good();
 }
+
+int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSize){
+    bool* visited = new bool[width*height];
+    memset(visited, false, width*height);
+
+    int componentID = 0;
+    for (int y = 0; y < height; ++y){
+        for (int x = 0; x < width; ++x){
+            int index = (y * width + x) * 3; // RGB image, so 3 bytes per pixel
+            unsigned char gray = rgbToGrayScale(imageData[index], imageData[index + 1], imageData[index + 2]); 
+
+            if (gray >= threshold && !visited[y * width + x]) {
+                auto component = std::make_unique<ConnectedComponent>(componentID++);
+                BFS(x, y, threshold, visited, component);
+                if (component->getPixelCount() >= minValidSize) {
+                    components.push_back(std::move(component));
+                }
+            }
+        }
+    }
+    delete[] visited;
+    return components.size();
