@@ -135,3 +135,30 @@ int PGMimageProcessor::filterComponentsBySize(int minSize, int maxSize){
     components.erase(it, components.end());
     return components.size();
 }
+
+bool PGMimageProcessor::writeComponents(const std::string& outFilename){
+    std::ofstream file(outFilename, std::ios::binary);
+    if (!file) {
+        std::cerr << "Error: Cannot open output file " << std::endl;
+        return false;
+    }
+    
+    file << "P6\n" << width << " " << height << "\n255\n";
+    if (!file) {
+        std::cerr << "Error: Failed writing header" << std::endl;
+        return false;
+    }
+    unsigned char* outputImage = new unsigned char[width*height]();
+
+    for (const auto& comp: components){
+        for(const auto& pixel: comp->getPixels()){
+            int index = (pixel.second * width + pixel.first) * 3;
+            outputImage[index] = 255; // R
+            outputImage[index + 1] = 255; // G
+            outputImage[index + 2] = 255; // B
+        }
+    }
+    file.write(reinterpret_cast<const char*>(outputImage), width * height*3);
+    delete[] outputImage;
+    file.close();
+}
