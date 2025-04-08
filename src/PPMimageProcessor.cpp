@@ -163,6 +163,76 @@ bool PGMimageProcessor::writeComponents(const std::string& outFilename){
     file.close();
 }
 
+bool PPMimageProcessor::writeBoxedComponents(const std::string& outFileName, unsigned char boxColor[3]){
+    if (!boxColor){
+        unsigned char red[3] = {255, 0, 0}; // Default to red
+        return writeBoxedComponents(outFileName, red);
+    }
+
+    std::ofstream filenout(outFileName, std::ios::binary);
+    if (!file){
+        std::cerr << "Error: Cannot open output file " << outFileName << std::endl;
+        return false;
+    }
+
+    file << "P6\n" << width << " " << height << "\n255\n";
+    if (!file) {
+        std::cerr << "Error: Failed writing header" << std::endl;
+        return false;
+    }
+
+    //create output image (copy original)
+    unsigned char* outputImage = new unsigned char[width*height*3];
+    std::copy(imageData, imageData + width*height*3, outputImage);
+
+    //draw bounding boxes
+    for (const auto&comp : components){
+        if (comp->getPixelCount() == 0){
+            continue;
+        }
+
+        //finding bounding box coordinates
+        int minX = width;
+        int minY = height;
+        int maxX = 0;
+        int maxY = 0;
+
+        for (const auto& pixel : comp->getPixels()){
+            minX = std::min(minX, pixel.first);
+            minY = std::min(minY, pixel.second);
+            maxX = std::max(maxX, pixel.first);
+            maxY = std::max(maxY, pixel.second);
+        }
+
+        //draw horizontal lines
+        for (int x = minX; x <= maxX; ++x){
+            //top line
+            outputImage[(minY * width + x) * 3] = boxColor[0];
+            outputImage[(minY * width + x) * 3 + 1] = boxColor[1];
+            outputImage[(minY * width + x) * 3 + 2] = boxColor[2];
+            //bottom line
+            outputImage[(maxY * width + x) * 3] = boxColor[0];
+            outputImage[(maxY * width + x) * 3 + 1] = boxColor[1];
+            outputImage[(maxY * width + x) * 3 + 2] = boxColor[2];
+        }
+
+        //draw vertical lines
+        for (int y = minY; y <= maxY; ++y){
+            //left line
+            outputImage[(y * width + minX) * 3] = boxColor[0];
+            outputImage[(y * width + minX) * 3 + 1] = boxColor[1];
+            outputImage[(y * width + minX) * 3 + 2] = boxColor[2];
+            //right line
+            outputImage[(y * width + maxX) * 3] = boxColor[0];
+            outputImage[(y * width + maxX) * 3 + 1] = boxColor[1];
+            outputImage[(y * width + maxX) * 3 + 2] = boxColor[2];
+        }
+    }
+    file.write(reinterpret_cast<const char*>(outputImage), width * height * 3);
+    delete[] outputImage;
+    return file.good();
+}
+
 int PGMimageProcessor::getComponentCount() const{
     return components.size();
 }
