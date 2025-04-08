@@ -1,6 +1,27 @@
 #include "PGMimageProcessor.h"
+#include "PPMimageProcessor.h"
 #include <iostream>
 #include <string>
+#include <memory>
+
+
+enum ImageType {
+    PGM,
+    PPM,
+    UNKNOWN
+};
+//function to determine the image type based on the file extension
+ImageType getImageType(const std::string& filename) {
+    size_t dotPos = filename.find_last_of('.');
+    if (dotPos != std::string::npos) {
+        std::string ext = filename.substr(dotPos + 1);
+        if (ext == "pgm") {
+            return PGM;
+        } else if (ext == "ppm") {
+            return PPM;
+        }
+    }
+}
 
 int main(int argc, char* argv[]){
     if (argc < 2){
@@ -46,6 +67,10 @@ int main(int argc, char* argv[]){
         int initialCount = processor.extractComponents(threshold, minValidSize);
         std::cout << "Initial components found: " << initialCount << std::endl;
 
+        std::cout << "Total components: " << processor.getComponentCount() << std::endl;
+            std::cout << "Smallest component: " << processor.getSmallestSize() << std::endl;
+            std::cout << "Largest component: " << processor.getLargestSize() << std::endl;
+
         if (filterMin != -1 && filterMax != -1){
             processor.filterComponentsBySize(filterMin, filterMax);
         }
@@ -64,6 +89,7 @@ int main(int argc, char* argv[]){
                 std::cerr << "Error: Failed to write output file" << std::endl;
                 return 1;
             }
+            std::cout << "Successfully wrote: " << outputFile << std::endl;
             //processor.writeComponents(outputFile);
         }
     }
