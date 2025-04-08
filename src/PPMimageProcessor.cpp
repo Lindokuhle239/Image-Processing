@@ -162,3 +162,27 @@ bool PGMimageProcessor::writeComponents(const std::string& outFilename){
     delete[] outputImage;
     file.close();
 }
+
+int PGMimageProcessor::getComponentCount() const{
+    return components.size();
+}
+
+int PGMimageProcessor::getLargestSize() const{
+    if (components.empty())
+        return 0;
+    return std::max_element(components.begin(), components.end(), [](const auto& a, const auto& b){
+        return a->getPixelCount() < b->getPixelCount();
+    })->get()->getPixelCount();
+}
+
+int PGMimageProcessor::getSmallestSize() const{
+    if (components.empty())
+        return 0;
+    return std::min_element(components.begin(), components.end(), [](const auto& a, const auto& b){
+        return a->getPixelCount() < b->getPixelCount();
+    })->get()->getPixelCount();
+}
+
+void PGMimageProcessor::printComponentData(const ConnectedComponent& comp) const{
+    std::cout << "Component ID: " << comp.getId() << ", Number of pixels: " << comp.getPixelCount() << "\n";
+}
