@@ -125,3 +125,13 @@ void PGMimageProcessor::BFS(int startX, int startY, unsigned char threshold, boo
         }
     }
 }
+
+int PGMimageProcessor::filterComponentsBySize(int minSize, int maxSize){
+    auto it = std::remove_if(components.begin(), components.end(), [minSize, maxSize](const std::unique_ptr<ConnectedComponent>& comp){
+    //auto it = std::remove_if(components.begin(), components.end(), [&](const std::unique_ptr<ConnectedComponent>& comp)){
+        int size = comp->getPixelCount();
+        return size < minSize || size > maxSize;
+    });
+    components.erase(it, components.end());
+    return components.size();
+}
